@@ -1,6 +1,6 @@
 '''
 Title: PDF to GeoTiff 2023
-Authors: Caitlin Hartig
+Authors: Caitlin Hartig, Tyler Jones
 Date: November 2023
 
 This program pulls PDF names from a file directory and then updates the naming convention for the PDFs. It then creates a corresponding TIFF file for each PDF.

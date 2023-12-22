@@ -1,3 +1,15 @@
+'''
+Title: Woodland Tint
+Authors: Caitlin Hartig, John Cuchta
+Date: September 2023
+
+This program reclassifies a raster and then converts it into a polygon. The area is calculated for each polygon.
+Smaller clearings of 1 acre or less are then converted into canopy, and clearings greater than 1 acre are removed.
+Then, the polygon numbers are streamlined, area is recalculated for the new larger polygons, and the polygons are smoothed out for a more polished look.
+
+Libraries Utilized: arcpy, datetime
+'''
+
 import arcpy, datetime
 
 '''

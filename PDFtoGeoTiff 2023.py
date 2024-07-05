@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Title: PDF to GeoTiff 2023
 Authors: Caitlin Hartig, Tyler Jones
@@ -14,12 +15,12 @@ import arcpy, os
 def get_all_pdfs_in_dir(in_dir):
 ##    Purpose: obtain file pathways to all PDFs contained in the folder.
 ##      Only returns the file, not the root + file, due to potential spacing issue in the in_dir:
-##      C:\Users\CaitlinHartig\OneDrive - Home\Documents\SampleInputPDFs
+##      C:\Users\CaitlinHartig\OneDrive - USDA\Documents\Xentity\Code\Tyler\SampleInputPDFs\SampleInputPDFs
 ##      The spaces in the root cause errors in program processing if the root is also returned for each file.
 ##    
 ##
-##    Input Example: "C:\Users\CaitlinHartig\OneDrive - Home\Documents\SampleInputPDFs"
-##    Output Example: "_ags__ags_20230525_180312_Map_Example Mountain_340008522.pdf" 
+##    Input Example: "C:\Users\CaitlinHartig\OneDrive - USDA\Documents\Xentity\Code\Tyler\SampleInputPDFs\SampleInputPDFs"
+##    Output Example: "_ags__ags_20230525_180312_FSTopo_Indian Mountain_340008522.pdf" 
   
   output = [] 
 
@@ -31,15 +32,15 @@ def get_all_pdfs_in_dir(in_dir):
 
 def parse_pdf_name(PDFFileName):
   '''
-    Purpose: parse input pdf file name based on position of Map substring.
+    Purpose: parse input pdf file name based on position of FSTopo substring.
       Joins remaining strings together with empty spaces.
 
-    Input Example: "_ags__ags_20230525_180312_Map_Example Mountain_340008522.pdf"
-    Output Example: "Map Example Mountain 340008522.pdf" 
+    Input Example: "_ags__ags_20230525_180312_FSTopo_Indian Mountain_340008522.pdf"
+    Output Example: "FSTopo Indian Mountain 340008522.pdf" 
   '''
   if "_" in PDFFileName:
     str_values = PDFFileName.split("_")
-    topo_index = str_values.index("Map")
+    topo_index = str_values.index("FSTopo")
     names = str_values[topo_index:]
 
     return " ".join(names)
@@ -48,7 +49,7 @@ def parse_pdf_name(PDFFileName):
 
 def create_new_batch(in_dir, batch_dir):
   '''
-    Purpose: either creates a new batch gms file (if the batch file name does not already exist in the input directory) or updates an existing one (if it does already exist).
+    Purpose: either create a new batch gms file (if the batch file name does not already exist in the input directory) or update an existing one (if it does already exist).
     Inputs: input directory, batch file name
     Outputs: prints whether or not a new batch file was created, or if an existing batch file is being appended
   '''
@@ -64,6 +65,9 @@ def create_new_batch(in_dir, batch_dir):
   else:
     print("Appending to existing Batch File\n")
 
+#This is test code to extract from a SECoord the component degree and minute values
+# dlb 11/15/2016
+ 
 def obtain_lat_long(SECoord):
   '''
     Purpose: obtains lat and long coordinates based on the SE coordinate of the map tile
@@ -79,6 +83,7 @@ def obtain_lat_long(SECoord):
   """
   minutes Latitude may have a fractional value, add if needed
   """
+
   if minLat % 15 == 11: # multiples of 15 (11.25, 26.25, 41.25, 56.25)
     minLat += 0.25
   elif minLat % 15 == 7: # multiples of 15 (7.5, 22.5, 37.5, 52.5)
@@ -87,6 +92,7 @@ def obtain_lat_long(SECoord):
     minLat += 0.75
 
   #Longitude - West implied
+
   #fifth through seventh characters represent Degrees Longitude
   degLong = SECoord[4:7]
   #eighth and ninth characters represent Minutes Longitude
@@ -106,6 +112,7 @@ def obtain_lat_long(SECoord):
      or
    size is 7.5 x 11.25 minutes (above 59 degrees)
    """
+  
   if float(degLat) < 50:
     sizeLat = "7.5"
     sizeLong = "7.5"
@@ -153,8 +160,8 @@ if __name__ == '__main__':
     
     GeoTiffDir = os.path.join(gms_dir, GeoTiff_name)
     create_new_batch(gms_dir, GeoTiffDir)
-    projection_name = r"C:\Users\CaitlinHartig\OneDrive - Home\Documents\geo.prj" #Update Me!
-    palette_name = r"C:\Users\CaitlinHartig\OneDrive - Home\Documents\MapTIFF.pal" #Update Me!
+    projection_name = r"C:\Users\CaitlinHartig\OneDrive - USDA\Documents\Xentity\Code\Tyler\geo.prj" #Update Me!
+    palette_name = r"C:\Users\CaitlinHartig\OneDrive - USDA\Documents\Xentity\Code\Tyler\FStopoTIFF.pal" #Update Me!
 
     lst = get_all_pdfs_in_dir(input_dir)
     
@@ -171,16 +178,16 @@ if __name__ == '__main__':
       if ".pdf" in PDFFileName:
         flag = 1
 
-      # Step 1: Rename PDF name starting at "Map" and convert "_" to " ". Ex) "Map Example Mountain 340008522.pdf"
+      # Step 1: Rename PDF name starting at "FSTopo" and convert "_" to " ". Ex) "FSTopo Bradley 340008207.pdf"
         print(f"\nCurrently processing: {PDFFileName}")
-        parsed_pdf_name = parse_pdf_name(PDFFileName) # "Map Example Mountain 340008522.pdf"
+        parsed_pdf_name = parse_pdf_name(PDFFileName) # "FSTopo Indian Mountain 340008522.pdf"
         renamed_pdf_file = os.path.join(input_dir, parsed_pdf_name)
         
         if parsed_pdf_name != PDFFileName:
           arcpy.management.Rename(original_pdf, renamed_pdf_file)
 
         
-        # Step 2: Create tiff file from each PDF. Should just be the coordinate name: Ex) 340008522.tif
+        # Step 2: Create tiff file from each PDF. Should just be the coordinate name: Ex) 340008207.tif
         str_values = renamed_pdf_file.split(" ")
         pdf_number = str_values[-1]
         renamed_pdf_as_tiff = pdf_number[:-4] + ".tif" # "340008522" + ".tif"
@@ -191,7 +198,7 @@ if __name__ == '__main__':
 
 
         # Step 3: Create a .gms file, which is the script that will run in the Global Mapper software.
-        raster_name = parsed_pdf_name[:-4] + ".tiff" # "Map Example Mountain 340008522.tiff"
+        raster_name = parsed_pdf_name[:-4] + ".tiff" # "FSTopo Indian Mountain 340008522.tiff"
         raster_file_name = os.path.join(gms_dir, raster_name)
         
         seLat, seLong, swLat, swLong = obtain_lat_long(renamed_pdf_as_tiff)

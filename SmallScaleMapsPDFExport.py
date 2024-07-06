@@ -4,7 +4,7 @@ Authors: Caitlin Hartig, Clay Williams
 Date: February 2024
 
 This program exports PDF(s) of the user's choosing from an existing map series that has been created in ArcGIS Pro.
-The user can either choose to export a single PDF, or can choose to export PDFs for an entire region of their choosing.
+The user can either choose to export a single PDF or can choose to export PDFs for an entire region of their choosing.
 
 Libraries Utilized: arcpy, os, datetime, shutil
 '''

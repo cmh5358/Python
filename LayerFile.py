@@ -6,6 +6,9 @@ Date: December 2023
 This program copies .aprx files from a file directory and then saves the .aprx into a different folder.
 It then exports the .lyrx files from selected .aprx in the copied folder and saves them into a specified location.
 
+For more information, please see:
+-ReadMe_LayerFile.txt
+
 Libraries Utilized: arcpy, os, datetime, shutil
 '''
 

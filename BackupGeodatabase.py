@@ -10,10 +10,10 @@ A function “remove_field_name(folder)” subsequently removes all fields with 
 Helper functions select the most recently modified backup GDB in a given file directory, return the file path of a FC
    within a given GDB, create a new folder, create a new GDB, create a new DS, convert FC to GDB, clip a file, and rename a file.
 
-Tools Utilized: arcpy, pathlib, OS, functions, timestamp, lists, strings, loops, conditionals
+Libraries Utilized: arcpy, datetime
 '''
 
-import arcpy
+import arcpy, datetime
 
 '''
 Function select_backup returns the most recently modified backup GDB in a given file directory (local machine).
